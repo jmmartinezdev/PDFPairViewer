@@ -1,0 +1,32 @@
+# macOS metadata
+.DS_Store
+.AppleDouble
+._*
+
+# Xcode build output
+build/
+DerivedData/
+*.xcarchive
+*.dSYM
+*.dSYM.zip
+*.ipa
+*.xcresult
+
+# Local Xcode settings and state (keep shared schemes tracked)
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Swift Package Manager build artifacts (keep Package.resolved tracked)
+.build/
+.swiftpm/
+
+# Logs
+*.log
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+!.env.sample

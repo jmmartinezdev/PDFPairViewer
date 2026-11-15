@@ -1,0 +1,182 @@
+import AppKit
+import Combine
+import PDFKit
+
+@MainActor
+final class DisplayPDF {
+    let entry: PDFEntry
+    private(set) var document: PDFDocument?
+    let error: String?
+    // A displayed document always retains its corresponding access session.
+    let access: FolderAccessSession
+
+    init(entry: PDFEntry, access: FolderAccessSession) {
+        self.entry = entry
+        self.access = access
+        if let document = PDFDocument(url: entry.url), !document.isLocked,
+           document.pageCount == 1, document.page(at: 0) != nil {
+            self.document = document
+            error = nil
+        } else {
+            document = nil
+            error = "This PDF is no longer readable as an unlocked, single-page document. Choose the folder again to rescan."
+        }
+    }
+
+    isolated deinit { document = nil }
+}
+
+@MainActor
+final class PDFPairViewModel: ObservableObject {
+    enum LoadState: Equatable { case initial, loading, ready, empty }
+
+    @Published private(set) var folder: URL?
+    @Published private(set) var catalog = PDFCatalogResult()
+    @Published private(set) var pairIndex = 0
+    @Published private(set) var loadState: LoadState = .initial
+    @Published private(set) var selectionError: String?
+    @Published private(set) var persistenceWarning: String?
+    @Published private(set) var left: DisplayPDF?
+    @Published private(set) var right: DisplayPDF?
+    @Published private(set) var focusRequest = UUID()
+    @Published var path = ""
+
+    let accessService: FolderAccessService
+    private let scanner: any PDFCatalogScanning
+    private var access: FolderAccessSession?
+    private var task: Task<Void, Never>?
+    private var requestID = UUID()
+    private var didRestore = false
+    private var closed = false
+
+    init(accessService: FolderAccessService = FolderAccessService(), scanner: any PDFCatalogScanning = PDFCatalog()) {
+        self.accessService = accessService
+        self.scanner = scanner
+    }
+
+    var pairCount: Int { (catalog.entries.count + 1) / 2 }
+    var canGoPrevious: Bool { pairCount > 0 && pairIndex > 0 }
+    var canGoNext: Bool { pairCount > 0 && pairIndex + 1 < pairCount }
+
+    func previous() {
+        guard canGoPrevious else { return }
+        pairIndex -= 1
+        updatePair()
+    }
+
+    func next() {
+        guard canGoNext else { return }
+        pairIndex += 1
+        updatePair()
+    }
+
+    private func updatePair() {
+        guard let access else { left = nil; right = nil; return }
+        let leftIndex = 2 * pairIndex
+        left = catalog.entries.indices.contains(leftIndex)
+            ? DisplayPDF(entry: catalog.entries[leftIndex], access: access) : nil
+        let rightIndex = leftIndex + 1
+        right = catalog.entries.indices.contains(rightIndex)
+            ? DisplayPDF(entry: catalog.entries[rightIndex], access: access) : nil
+    }
+
+    func restoreIfNeeded() {
+        guard !didRestore else { return }
+        didRestore = true
+        closed = false
+        do {
+            if let (session, warning) = try accessService.restore() {
+                load(session, persistenceWarning: warning)
+            }
+        } catch { selectionError = error.localizedDescription }
+    }
+
+    func browse() {
+        select { try await self.accessService.chooseFolder(seed: self.folder) }
+    }
+
+    func submitPath() {
+        let submitted = path
+        select {
+            let url = try FolderAccessService.url(from: submitted)
+            do { return try self.accessService.access(url) }
+            catch FolderSelectionError.notDirectory { throw FolderSelectionError.notDirectory }
+            catch { return try await self.accessService.chooseFolder(seed: url, matching: url) }
+        }
+    }
+
+    func dropped(_ url: URL) {
+        select {
+            do { return try self.accessService.access(url) }
+            catch FolderSelectionError.notDirectory { throw FolderSelectionError.notDirectory }
+            catch { return try await self.accessService.chooseFolder(seed: url, matching: url) }
+        }
+    }
+
+    func reportInvalidDrop() { selectionError = FolderSelectionError.invalidDrop.localizedDescription }
+
+    private func select(_ selection: @escaping @MainActor () async throws -> FolderAccessSession?) {
+        guard !accessService.isSelecting, !closed else { return }
+        // Invalidate any in-flight scan immediately, including while a panel is open.
+        task?.cancel()
+        let id = UUID()
+        requestID = id
+        loadState = folder == nil ? .initial : (catalog.entries.isEmpty ? .empty : .ready)
+        task = Task { [weak self] in
+            do {
+                guard let session = try await selection(), let self,
+                      !Task.isCancelled, self.requestID == id, !self.closed else { return }
+                self.load(session)
+            } catch {
+                guard let self, self.requestID == id, !self.closed else { return }
+                self.selectionError = error.localizedDescription
+            }
+        }
+    }
+
+    // Internal for deterministic testing without opening a system panel.
+    func load(_ session: FolderAccessSession, persistenceWarning: String? = nil) {
+        guard !closed else { return }
+        task?.cancel()
+        let id = UUID()
+        requestID = id
+        loadState = .loading
+        selectionError = nil
+        let scanner = scanner
+        task = Task { [weak self] in
+            do {
+                let result = try await scanner.scan(folder: session.url, access: session)
+                guard let self, !Task.isCancelled, self.requestID == id, !self.closed else { return }
+                let isDifferent = self.folder != session.url
+                self.folder = session.url
+                self.path = session.url.path
+                self.catalog = result
+                self.pairIndex = isDifferent ? 0 : min(self.pairIndex, max(0, (result.entries.count + 1) / 2 - 1))
+                // Old display objects retain old access until PDFKit has cleared them.
+                self.access = session
+                self.updatePair()
+                self.persistenceWarning = persistenceWarning ?? self.accessService.persist(session)
+                self.loadState = result.entries.isEmpty ? .empty : .ready
+                self.focusRequest = UUID()
+            } catch {
+                guard let self, !Task.isCancelled, self.requestID == id, !self.closed else { return }
+                self.selectionError = "Could not scan the folder: \(error.localizedDescription)"
+                self.loadState = self.folder == nil ? .initial : (self.catalog.entries.isEmpty ? .empty : .ready)
+            }
+        }
+    }
+
+    func close() {
+        closed = true
+        requestID = UUID()
+        task?.cancel()
+        task = nil
+        left = nil
+        right = nil
+        access = nil
+        catalog = PDFCatalogResult()
+        folder = nil
+        loadState = .initial
+        didRestore = false
+    }
+}
