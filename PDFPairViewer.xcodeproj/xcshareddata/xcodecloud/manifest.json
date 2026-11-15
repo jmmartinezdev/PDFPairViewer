@@ -1,0 +1,9 @@
+{
+  "id" : "396ca188-46a2-4456-bea5-2fc38fad3bfd",
+  "targets" : [
+    {
+      "id" : "41cc9693-b51d-40ce-b7af-92135f386d0d",
+      "name" : "PDFPairViewer"
+    }
+  ]
+}
