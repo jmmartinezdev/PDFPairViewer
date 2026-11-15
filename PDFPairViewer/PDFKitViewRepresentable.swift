@@ -160,6 +160,10 @@ final class FittingPDFView: PDFView {
         super.layout()
         guard document != nil, bounds.width > 0, bounds.height > 0 else { return }
         let fit = scaleFactorForSizeToFit
-        if fit.isFinite, fit > 0, abs(scaleFactor - fit) > 0.001 { scaleFactor = fit }
+        guard fit.isFinite, fit > 0 else { return }
+        // Treat the whole-page fit as 100%, not PDFKit's physical-size scale of 1.
+        // Recompute on resize so smaller panes can still show the entire page.
+        if minScaleFactor != fit { minScaleFactor = fit }
+        if abs(scaleFactor - fit) > 0.001 { scaleFactor = fit }
     }
 }
