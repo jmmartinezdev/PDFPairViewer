@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <clipPath id="lens"><circle cx="500" cy="488" r="300"/></clipPath>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9FCFF"/>
+      <stop offset="1" stop-color="#D8E8FA"/>
+    </linearGradient>
+    <linearGradient id="leftPage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E8F2FE"/>
+    </linearGradient>
+    <linearGradient id="rightPage" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F7FBFF"/>
+      <stop offset="1" stop-color="#DDEBFA"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#lens)">
+    <circle cx="500" cy="488" r="300" fill="url(#glass)"/>
+    <!-- Two open document pages -->
+    <path d="M 228 263 Q 228 246 247 246 H 481 Q 493 246 493 263 V 720 Q 481 704 461 704 H 248 Q 228 704 228 684 Z" fill="url(#leftPage)"/>
+    <path d="M 507 263 Q 507 246 524 246 H 754 Q 774 246 774 266 V 684 Q 774 704 754 704 H 540 Q 521 704 507 720 Z" fill="url(#rightPage)"/>
+    <!-- Fold / center seam -->
+    <path d="M 499 250 C 494 365 494 588 500 715" fill="none" stroke="#4B7FC8" stroke-width="25"/>
+    <path d="M 500 270 C 498 390 498 580 500 690" fill="none" stroke="#8BB8EB" stroke-width="5" opacity=".7"/>
+    <!-- Document text marks -->
+    <g fill="#A9C1DF">
+      <rect x="270" y="354" width="172" height="28" rx="14"/>
+      <rect x="270" y="412" width="126" height="28" rx="14"/>
+      <rect x="270" y="470" width="158" height="28" rx="14"/>
+      <rect x="270" y="528" width="145" height="28" rx="14"/>
+      <rect x="550" y="354" width="169" height="28" rx="14"/>
+      <rect x="550" y="412" width="187" height="28" rx="14"/>
+      <rect x="550" y="470" width="148" height="28" rx="14"/>
+      <rect x="550" y="528" width="127" height="28" rx="14"/>
+    </g>
+    <!-- Soft reflected highlight kept as a simple vector shape -->
+    <path d="M 242 309 Q 276 223 376 207 Q 414 201 446 213" fill="none" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round" opacity=".44"/>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="handle" x1=".15" y1="0" x2=".85" y2="1">
+      <stop offset="0" stop-color="#17253D"/>
+      <stop offset=".55" stop-color="#0C1930"/>
+      <stop offset="1" stop-color="#243A5D"/>
+    </linearGradient>
+    <linearGradient id="grip" x1="0" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#233B62"/>
+      <stop offset="1" stop-color="#101D35"/>
+    </linearGradient>
+  </defs>
+  <!-- Handle sits behind the lens bezel. -->
+  <path d="M 704 690 L 850 838" fill="none" stroke="#10203A" stroke-width="100" stroke-linecap="round"/>
+  <path d="M 704 690 L 850 838" fill="none" stroke="url(#handle)" stroke-width="76" stroke-linecap="round"/>
+  <path d="M 726 710 L 846 831" fill="none" stroke="url(#grip)" stroke-width="49" stroke-linecap="round"/>
+  <path d="M 745 710 L 842 808" fill="none" stroke="#6683AD" stroke-opacity=".44" stroke-width="8" stroke-linecap="round"/>
+</svg>
