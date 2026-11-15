@@ -32,6 +32,16 @@ open build/Build/Products/Debug/PDFPairViewer.app
 
 ## Structure
 
+Source files are grouped by responsibility under `PDFPairViewer/`:
+
+- `Views/`: SwiftUI screens and shared viewer colors; `Views/PDFKit/` contains the PDFKit bridge, fitting view, and viewport synchronization.
+- `ViewModels/`: observable pair selection and loading state.
+- `Models/`: PDF entries, catalog results, displayed documents, folder access sessions, and selection errors.
+- `Services/`: folder authorization/persistence and PDF catalog scanning.
+- `Commands/`: File, View, and Go menu commands and their scene-focused actions.
+
+The app entry point and signing entitlements remain at the source root. Xcode's filesystem-synchronized group discovers the nested source files automatically.
+
 Three main SwiftUI views (`ContentView`, `FolderPickerView`, `PDFPairView`), a scene-focused folder-path command, and one PDFKit bridge (`PDFKitViewRepresentable`). The bridge owns the window-scoped keyboard route and clears PDFKit references before releasing access. Its AppKit subclass keeps pages fitted. Path-sheet dismissal completes before launching a picker or authorization request.
 
 `PDFPairViewModel` is main-actor isolated. Catalog validation runs sequentially in a cancellable detached task, inside per-document autorelease pools. Only the visible pair has main-actor display documents. Access sessions are retained independently by scans and display documents; replacement or closing the window cannot revoke access underneath an outstanding reader. Request IDs prevent obsolete scans from updating the UI.
