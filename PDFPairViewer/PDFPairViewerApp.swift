@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct PDFPairViewerApp: App {
     var body: some Scene {
-        Window("PDF Pair Viewer", id: "viewer") {
+        WindowGroup("PDF Pair Viewer", id: "viewer") {
             ContentView()
                 .frame(minWidth: 760, minHeight: 520)
         }

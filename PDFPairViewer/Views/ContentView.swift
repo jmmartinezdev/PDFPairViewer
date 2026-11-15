@@ -95,6 +95,7 @@ struct ContentView: View {
             }
         }
         .background(Color(nsColor: .viewerCanvas))
+        .navigationTitle(model.folder.map { "\($0.lastPathComponent) — PDF Pair Viewer" } ?? "PDF Pair Viewer")
         .preferredColorScheme(.dark)
         .toolbar(removing: .title)
         .toolbarBackground(Color(nsColor: .viewerCanvas), for: .windowToolbar)
