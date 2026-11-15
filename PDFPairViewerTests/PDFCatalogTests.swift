@@ -1,4 +1,5 @@
-import AppKit
+import Foundation
+import CoreGraphics
 import PDFKit
 import XCTest
 @testable import PDFPairViewer
@@ -10,8 +11,9 @@ enum Fixtures {
         return url
     }
 
-    static func pdf(_ url: URL, pages: Int = 1, locked: Bool = false) throws {
-        var box = CGRect(x: 0, y: 0, width: 300, height: 400)
+    static func pdf(_ url: URL, pages: Int = 1, locked: Bool = false,
+                    size: CGSize = CGSize(width: 300, height: 400)) throws {
+        var box = CGRect(origin: .zero, size: size)
         guard let context = CGContext(url as CFURL, mediaBox: &box, nil) else {
             throw CocoaError(.fileWriteUnknown)
         }

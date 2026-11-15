@@ -1,4 +1,6 @@
+#if os(macOS)
 import AppKit
+#endif
 import Foundation
 
 @MainActor
@@ -27,6 +29,7 @@ final class FolderAccessService {
         return session
     }
 
+    #if os(macOS)
     func chooseFolder(seed: URL? = nil, matching requested: URL? = nil) async throws -> FolderAccessSession? {
         guard !isSelecting else { return nil }
         isSelecting = true
@@ -55,11 +58,17 @@ final class FolderAccessService {
         }
         return try access(url)
     }
+    #endif
 
     func persist(_ session: FolderAccessSession) -> String? {
         do {
+            #if os(macOS)
+            let options: URL.BookmarkCreationOptions = [.withSecurityScope, .securityScopeAllowOnlyReadAccess]
+            #else
+            let options: URL.BookmarkCreationOptions = [.minimalBookmark]
+            #endif
             let data = try session.url.bookmarkData(
-                options: [.withSecurityScope, .securityScopeAllowOnlyReadAccess],
+                options: options,
                 includingResourceValuesForKeys: nil, relativeTo: nil
             )
             defaults.set(data, forKey: bookmarkKey)
@@ -73,7 +82,12 @@ final class FolderAccessService {
         guard let data = defaults.data(forKey: bookmarkKey) else { return nil }
         do {
             var stale = false
-            let url = try URL(resolvingBookmarkData: data, options: [.withSecurityScope, .withoutUI],
+            #if os(macOS)
+            let options: URL.BookmarkResolutionOptions = [.withSecurityScope, .withoutUI]
+            #else
+            let options: URL.BookmarkResolutionOptions = [.withoutUI]
+            #endif
+            let url = try URL(resolvingBookmarkData: data, options: options,
                               relativeTo: nil, bookmarkDataIsStale: &stale)
             let session = try access(url)
             return (session, stale ? persist(session) : nil)

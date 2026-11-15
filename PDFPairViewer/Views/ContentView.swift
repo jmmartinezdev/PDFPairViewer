@@ -1,3 +1,4 @@
+#if os(macOS)
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -221,3 +222,4 @@ struct ContentView: View {
         .focusedSceneValue(\.pairNavigation, navigationActions)
     }
 }
+#endif

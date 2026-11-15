@@ -193,4 +193,28 @@ final class PDFPairViewModelTests: XCTestCase {
         XCTAssertEqual(model.loadState, .initial)
         XCTAssertNil(model.folder)
     }
+
+    #if os(iOS)
+    func testFilesPickerImportCancellationAndFailurePreserveFolder() async throws {
+        let folder = try Fixtures.folder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        try Fixtures.pdf(folder.appendingPathComponent("1.pdf"))
+        let model = model()
+        defer { model.close() }
+        model.browse()
+        XCTAssertTrue(model.showingFolderPicker)
+        model.showingFolderPicker = false
+        model.importFolder(.success([folder]))
+        try await waitUntil { model.loadState == .ready }
+        XCTAssertEqual(model.folder, folder)
+        model.importFolder(.failure(CocoaError(.userCancelled)))
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertNil(model.selectionError)
+        XCTAssertEqual(model.folder, folder)
+        model.importFolder(.success([folder.appendingPathComponent("1.pdf")]))
+        try await waitUntil { model.selectionError != nil }
+        XCTAssertEqual(model.folder, folder)
+        XCTAssertNotNil(model.left?.document)
+    }
+    #endif
 }

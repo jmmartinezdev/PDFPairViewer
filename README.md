@@ -1,20 +1,25 @@
 # PDF Pair Viewer
 
-A native, offline macOS app for reviewing a folder of single-page PDFs two at a time. Built with SwiftUI, AppKit, and PDFKit; no third-party packages, network access, or Git repository.
+A native, offline macOS and iPadOS app for reviewing a folder of single-page PDFs two at a time. Built with SwiftUI, PDFKit, and platform-specific AppKit/UIKit bridges; no third-party packages or app-initiated network access.
 
 ## Open and run
 
-Open `PDFPairViewer.xcodeproj`, select the **PDFPairViewer** scheme, and run. Requires **macOS 26 or newer**. The project uses Swift 6 and an Xcode filesystem-synchronized project; use **Xcode 26 or newer**. Developed and tested with **Xcode 27.0 (27A266a), Swift 6.4**.
+Open `PDFPairViewer.xcodeproj`, select the **PDFPairViewer** scheme, choose **My Mac** or an **iPad simulator/device**, and run. Requires **macOS 26 or iPadOS 26 or newer**. iPhone and Mac Catalyst are not targeted. The project uses Swift 6 and an Xcode filesystem-synchronized project; use **Xcode 26 or newer**. Developed and tested with **Xcode 27.0 (27A266a), Swift 6.4**.
 
-The default signing identity is **Sign to Run Locally** (`-`), with App Sandbox and user-selected read-only file access enabled. For distribution, choose your own bundle identifier, development team, and signing identity in Xcode. No team is required for the local build.
+Mac builds default to **Sign to Run Locally** (`-`), with App Sandbox and user-selected read-only file access enabled. iPad device builds use automatic Apple Development signing; select your development team for both the app and test targets. Mac entitlements are applied only to macOS builds. Both platforms use the same bundle identifier so they can share an App Store Connect record. For distribution, choose your own bundle identifier, development team, and signing configuration in Xcode. No team is required for local Mac or simulator builds.
 
 ```sh
 xcodebuild build -scheme PDFPairViewer -destination 'platform=macOS' -derivedDataPath build
 xcodebuild test -scheme PDFPairViewer -destination 'platform=macOS' -derivedDataPath build
 open build/Build/Products/Debug/PDFPairViewer.app
+
+# Unsigned iPad simulator build
+xcodebuild build -scheme PDFPairViewer -destination 'generic/platform=iOS Simulator' -derivedDataPath build/ipados CODE_SIGNING_ALLOWED=NO
+# Replace the destination with an installed iPad simulator as needed
+xcodebuild test -scheme PDFPairViewer -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M5),OS=26.0' -derivedDataPath build/ipados CODE_SIGNING_ALLOWED=NO
 ```
 
-## Use
+## Use on Mac
 
 - Click the toolbar folder button (⌘O), use **Choose Folder…** in the empty state, or drop exactly one folder anywhere on the window.
 - Use **File → Open Folder by Path…** (⇧⌘O), or right-click the folder button, to enter an absolute path (including `~/…`). Press Return or **Open** to load it; **Browse…** opens the native picker instead.
@@ -30,6 +35,14 @@ open build/Build/Products/Debug/PDFPairViewer.app
 - The last successfully loaded folder is saved as an app-scoped security-scoped bookmark. Relaunch rescans it at the first pair. Bookmark failures do not prevent viewing; use Browse to reauthorize lost access.
 - Selecting a different folder resets to its first pair. Rescanning the same folder preserves the pair when possible and clamps after deletions. A failed scan preserves the currently loaded folder.
 
+## Use on iPad
+
+- Tap **Choose Folder…** or the toolbar folder button to select a folder in **Files**. The provider must support folder selection. Download cloud-hosted PDFs in Files first for reliable offline use.
+- PDFs remain side by side in portrait, landscape, and resizable multitasking windows. Each page fits its pane after rotation/resizing or pair changes; pinch to zoom and drag to pan. Zoom and the relative visible page center synchronize in both directions, subject to page-edge limits. Zoom ranges from whole-page fit to 16× fit.
+- Use the large bottom **Up/Down** buttons to navigate pairs. The toolbar **Zoom** menu provides Zoom Out, Fit to Page, and Zoom In. With a hardware keyboard, use ↑/↓, ⌘O, ⌘−, ⌘0, and ⌘+.
+- The information button shows skipped-file counts and bookmark warnings. The last folder is remembered using an iPad-compatible bookmark and security-scoped access. If access is revoked or the provider is unavailable, choose the folder again.
+- Mac-only path entry, Finder drops, window controls, and menu-bar commands are not exposed on iPad. Files handles folder authorization instead. Picker cancellation or a failed selection preserves the loaded pair.
+
 ## Structure
 
 Source files are grouped by responsibility under `PDFPairViewer/`:
@@ -42,7 +55,7 @@ Source files are grouped by responsibility under `PDFPairViewer/`:
 
 The app entry point and signing entitlements remain at the source root. Xcode's filesystem-synchronized group discovers the nested source files automatically.
 
-Three main SwiftUI views (`ContentView`, `FolderPickerView`, `PDFPairView`), a scene-focused folder-path command, and one PDFKit bridge (`PDFKitViewRepresentable`). The bridge owns the window-scoped keyboard route and clears PDFKit references before releasing access. Its AppKit subclass keeps pages fitted. Path-sheet dismissal completes before launching a picker or authorization request.
+`ContentView` and `FolderPickerView` implement the Mac interface; `iPadContentView` implements the iPad interface and Files importer. `PDFPairView`, models, scanning, and viewport synchronization are shared. `PDFKitViewRepresentable` has separate AppKit and UIKit implementations. Both bridges clear PDFKit references before releasing access. The fitting PDF view has platform-specific layout hooks; iPad scrolling is observed without replacing PDFKit's scroll-view delegate. On Mac, the bridge also owns the window-scoped keyboard route, and path-sheet dismissal completes before launching authorization UI.
 
 `PDFPairViewModel` is main-actor isolated. Catalog validation runs sequentially in a cancellable detached task, inside per-document autorelease pools. Only the visible pair has main-actor display documents. Access sessions are retained independently by scans and display documents; replacement or closing the window cannot revoke access underneath an outstanding reader. Request IDs prevent obsolete scans from updating the UI.
 
@@ -61,6 +74,18 @@ System UI and actual permission grants need these **manual checks on a signed, s
 - Change folders rapidly during a large scan and close the window during a scan. Confirm no obsolete results appear and reopen works.
 - Check toolbar focus followed by Up/Down, ⇧⌘O path entry and cancellation, and status popovers. Confirm glass filename badges overlay the PDFs without reserving space and allow selection/scrolling through them. Verify whole-page fitting for portrait and landscape pages, including after zooming and changing pairs. Check fullscreen, inactive windows, Reduce Transparency, Increase Contrast, and VoiceOver labels.
 
-Build output goes in `build/`. No Git initialization is performed.
+Build output goes in `build/`.
 
-Verification on Xcode 27.0: **11 XCTest tests passed** and the local signed Debug build succeeded. The normal app's signing entitlements were checked: sandbox, user-selected read-only access, and app-scoped bookmarks, with no network or broad file-access entitlement. Xcode temporarily adds test-runner access exceptions to its test host; run the regular build command again after tests before manual sandbox verification. The interactive checklist above remains to be verified manually.
+Verification on Xcode 27.0: **14 macOS tests and 16 iPadOS tests passed** (iPad Pro 13-inch M5 simulator, iPadOS 26.0). The local signed Mac Debug build, iPad simulator build, and unsigned iPad device Release build succeeded. The iPad app was also launched on the simulator and its initial interface inspected. The normal Mac app's signing entitlements were checked: sandbox, user-selected read-only access, and app-scoped bookmarks, with no network or broad file-access entitlement. Xcode temporarily adds test-runner access exceptions to its test host; run the regular build command again after tests before manual sandbox verification. Physical-device signing, App Store validation, and the interactive checklists remain to be verified manually.
+
+### iPad verification
+
+The iPad test suite also exercises UIKit whole-page fitting, resize/refit, fit-relative zoom limits, bidirectional zoom and scroll synchronization, different page proportions, document replacement, detachment, and Files-import cancellation/failure. Shared catalog, navigation, cancellation, and bookmark tests run on both platforms.
+
+Before distribution, verify on a signed physical iPad:
+
+- Select folders from On My iPad, iCloud Drive, and any supported third-party provider; cancel and reselect without losing the current pair.
+- Relaunch with the saved external folder, then move/delete/revoke it and check recovery. Simulator bookmark tests use local fixtures and do not prove external-provider permission persistence.
+- Pinch and pan either pane, navigate to an odd final PDF, rotate, and resize into a narrow multitasking window. Confirm synchronized centers, readable filename badges, and reachable controls.
+- Use a hardware keyboard and VoiceOver; confirm shortcuts do not act behind Files or the status popover. Test background/foreground and independent app windows during a large scan.
+- Configure an iOS build/test/archive action in Xcode Cloud separately from the Mac workflow when ready to ship the iPad version.

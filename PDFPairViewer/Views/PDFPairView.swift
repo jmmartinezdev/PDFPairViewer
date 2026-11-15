@@ -43,7 +43,7 @@ struct PDFPairView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(nsColor: .viewerCanvas))
+        .background(Color.viewerCanvas)
         .clipped()
         .help(display?.entry.url.path ?? missing)
     }

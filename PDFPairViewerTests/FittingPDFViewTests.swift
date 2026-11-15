@@ -1,3 +1,4 @@
+#if os(macOS)
 import AppKit
 import PDFKit
 import XCTest
@@ -171,3 +172,4 @@ final class FittingPDFViewTests: XCTestCase {
         XCTAssertEqual(try center(left).y, try center(right).y, accuracy: 1)
     }
 }
+#endif

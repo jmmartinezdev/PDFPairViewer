@@ -1,4 +1,4 @@
-import AppKit
+import Foundation
 import Combine
 import PDFKit
 
@@ -16,6 +16,9 @@ final class PDFPairViewModel: ObservableObject {
     @Published private(set) var right: DisplayPDF?
     @Published private(set) var focusRequest = UUID()
     @Published var path = ""
+    #if os(iOS)
+    @Published var showingFolderPicker = false
+    #endif
 
     let accessService: FolderAccessService
     private let scanner: any PDFCatalogScanning
@@ -29,6 +32,10 @@ final class PDFPairViewModel: ObservableObject {
         self.accessService = accessService
         self.scanner = scanner
     }
+
+    // A dismissed iPad window releases its model. Do not close on view disappearance:
+    // adaptive system pickers can temporarily cover the presenting interface.
+    deinit { task?.cancel() }
 
     var pairCount: Int { (catalog.entries.count + 1) / 2 }
     var canGoPrevious: Bool { pairCount > 0 && pairIndex > 0 }
@@ -68,9 +75,14 @@ final class PDFPairViewModel: ObservableObject {
     }
 
     func browse() {
+        #if os(macOS)
         select { try await self.accessService.chooseFolder(seed: self.folder) }
+        #else
+        showingFolderPicker = true
+        #endif
     }
 
+    #if os(macOS)
     func submitPath() {
         let submitted = path
         select {
@@ -88,6 +100,18 @@ final class PDFPairViewModel: ObservableObject {
             catch { return try await self.accessService.chooseFolder(seed: url, matching: url) }
         }
     }
+    #else
+    func importFolder(_ result: Result<[URL], Error>) {
+        select {
+            do {
+                guard let url = try result.get().first else { return nil }
+                return try self.accessService.access(url)
+            } catch let error as CocoaError where error.code == .userCancelled {
+                return nil
+            }
+        }
+    }
+    #endif
 
     func reportInvalidDrop() { selectionError = FolderSelectionError.invalidDrop.localizedDescription }
 

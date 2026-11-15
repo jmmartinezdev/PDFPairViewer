@@ -4,9 +4,16 @@ import SwiftUI
 struct PDFPairViewerApp: App {
     var body: some Scene {
         WindowGroup("PDF Pair Viewer", id: "viewer") {
+            #if os(macOS)
             ContentView()
                 .frame(minWidth: 760, minHeight: 520)
+            #else
+            NavigationStack {
+                iPadContentView()
+            }
+            #endif
         }
+        #if os(macOS)
         .windowToolbarStyle(.unified)
         .defaultSize(width: 1200, height: 820)
         .commands {
@@ -14,5 +21,6 @@ struct PDFPairViewerApp: App {
             PDFZoomCommands()
             PairNavigationCommands()
         }
+        #endif
     }
 }
