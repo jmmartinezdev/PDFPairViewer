@@ -3,6 +3,7 @@ import PDFKit
 import SwiftUI
 
 struct PDFKitViewRepresentable: NSViewRepresentable {
+    @Environment(\.colorScheme) private var colorScheme
     var display: DisplayPDF?
     let synchronization: PDFViewportSynchronization
     let routesKeys: Bool
@@ -26,7 +27,7 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
         view.pageBreakMargins = .init(top: 0, left: 0, bottom: 0, right: 0)
         view.pageShadowsEnabled = false
         view.autoScales = true
-        view.backgroundColor = .viewerCanvas
+        view.backgroundColor = .viewerCanvas(for: colorScheme)
         view.windowChanged = { [weak coordinator = context.coordinator] window in
             coordinator?.attach(to: window)
         }
@@ -45,6 +46,9 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
     }
 
     func updateNSView(_ view: FittingPDFView, context: Context) {
+        // PDFKit may cache its background; supply a concrete color on appearance changes.
+        let background = NSColor.viewerCanvas(for: colorScheme)
+        if view.backgroundColor != background { view.backgroundColor = background }
         let coordinator = context.coordinator
         coordinator.routesKeys = routesKeys
         coordinator.previous = previous
