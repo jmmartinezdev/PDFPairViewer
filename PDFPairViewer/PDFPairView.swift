@@ -3,6 +3,7 @@ import SwiftUI
 struct PDFPairView: View {
     @ObservedObject var model: PDFPairViewModel
     @Environment(\.colorSchemeContrast) private var contrast
+    @State private var synchronization = PDFViewportSynchronization()
     var suspendsKeyboard = false
 
     var body: some View {
@@ -17,7 +18,8 @@ struct PDFPairView: View {
         ZStack(alignment: .topLeading) {
             ZStack {
                 PDFKitViewRepresentable(
-                    display: display, routesKeys: keyboardRoute, focusRequest: model.focusRequest,
+                    display: display, synchronization: synchronization,
+                    routesKeys: keyboardRoute, focusRequest: model.focusRequest,
                     previous: model.previous, next: model.next,
                     isSelecting: { model.accessService.isSelecting || suspendsKeyboard }, close: model.close
                 )
