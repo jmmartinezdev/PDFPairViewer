@@ -22,13 +22,23 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
         view.displayMode = .singlePage
         view.displayDirection = .vertical
         view.displaysPageBreaks = false
+        view.pageBreakMargins = .init(top: 0, left: 0, bottom: 0, right: 0)
+        view.pageShadowsEnabled = false
         view.autoScales = true
-        view.backgroundColor = .underPageBackgroundColor
+        view.backgroundColor = .viewerCanvas
         view.windowChanged = { [weak coordinator = context.coordinator] window in
             coordinator?.attach(to: window)
         }
         context.coordinator.view = view
         return view
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView: FittingPDFView,
+                      context: Context) -> CGSize? {
+        // PDFKit's intrinsic document size must not enlarge its SwiftUI pane.
+        guard let width = proposal.width, let height = proposal.height,
+              width.isFinite, height.isFinite else { return nil }
+        return CGSize(width: max(0, width), height: max(0, height))
     }
 
     func updateNSView(_ view: FittingPDFView, context: Context) {
@@ -112,8 +122,9 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
                     if window.firstResponder is NSTextView || window.firstResponder is NSTextField {
                         return false
                     }
-                    guard let responder = window.firstResponder as? NSView,
-                          responder is NSButton || Self.isInsidePDFView(responder) else { return false }
+                    // SwiftUI toolbar controls may use hosting views rather than NSButton.
+                    // Route within this window, but never while a sheet/popover is editing.
+                    guard window.firstResponder is NSView else { return false }
                     if !event.isARepeat {
                         if event.keyCode == 125 { self.next?() } else { self.previous?() }
                     }
@@ -121,15 +132,6 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
                 }
                 return consumed ? nil : event
             }
-        }
-
-        private static func isInsidePDFView(_ view: NSView) -> Bool {
-            var current: NSView? = view
-            while let candidate = current {
-                if candidate is PDFView { return true }
-                current = candidate.superview
-            }
-            return false
         }
 
         func detach() {
@@ -140,6 +142,10 @@ struct PDFKitViewRepresentable: NSViewRepresentable {
             window = nil
         }
     }
+}
+
+extension NSColor {
+    static let viewerCanvas = NSColor(srgbRed: 0.085, green: 0.085, blue: 0.09, alpha: 1)
 }
 
 final class FittingPDFView: PDFView {

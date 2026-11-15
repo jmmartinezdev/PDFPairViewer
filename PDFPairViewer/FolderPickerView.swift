@@ -15,8 +15,8 @@ struct FolderPickerView: View {
                 .onSubmit(submit)
                 .accessibilityLabel("Folder path")
             Button("Open", action: submit)
+                .keyboardShortcut(.defaultAction)
             Button("Browse…", action: browse)
-                .keyboardShortcut("o", modifiers: .command)
         }
     }
 }
