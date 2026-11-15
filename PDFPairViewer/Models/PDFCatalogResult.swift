@@ -7,10 +7,18 @@ struct PDFSkipCounts: Equatable, Sendable {
 
     var summary: String? {
         var parts: [String] = []
-        if unreadable > 0 { parts.append("\(unreadable) unreadable") }
-        if locked > 0 { parts.append("\(locked) locked") }
-        if nonSinglePage > 0 { parts.append("\(nonSinglePage) not single-page") }
-        return parts.isEmpty ? nil : "Skipped PDFs: " + parts.joined(separator: ", ") + "."
+        if unreadable > 0 {
+            parts.append(String(localized: "\(unreadable) unreadable"))
+        }
+        if locked > 0 {
+            parts.append(String(localized: "\(locked) locked"))
+        }
+        if nonSinglePage > 0 {
+            parts.append(String(localized: "\(nonSinglePage) not single-page"))
+        }
+        guard !parts.isEmpty else { return nil }
+        let list = parts.joined(separator: String(localized: ", "))
+        return String(localized: "Skipped PDFs: \(list).")
     }
 }
 

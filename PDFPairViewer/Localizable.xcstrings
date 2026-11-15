@@ -1,0 +1,554 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    ", " : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", "
+          }
+        }
+      }
+    },
+    "/path/to/folder" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/ruta/a/la/carpeta"
+          }
+        }
+      }
+    },
+    "%@ — PDF Pair Viewer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ — PDF Pair Viewer"
+          }
+        }
+      }
+    },
+    "%lld locked" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bloqueados"
+          }
+        }
+      }
+    },
+    "%lld not single-page" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld no son de una sola página"
+          }
+        }
+      }
+    },
+    "%lld unreadable" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ilegibles"
+          }
+        }
+      }
+    },
+    "Browse…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examinar…"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar"
+          }
+        }
+      }
+    },
+    "Cannot display PDF" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede mostrar el PDF"
+          }
+        }
+      }
+    },
+    "Choose a folder containing single-page PDFs." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una carpeta que contenga PDF de una sola página."
+          }
+        }
+      }
+    },
+    "Choose a folder to begin" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una carpeta para comenzar"
+          }
+        }
+      }
+    },
+    "Choose a folder, enter its path, or drop one here." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una carpeta, introduce su ruta o suelta una aquí."
+          }
+        }
+      }
+    },
+    "Choose a folder, not a file." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una carpeta, no un archivo."
+          }
+        }
+      }
+    },
+    "Choose folder" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir carpeta"
+          }
+        }
+      }
+    },
+    "Choose folder (⌘O)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir carpeta (⌘O)"
+          }
+        }
+      }
+    },
+    "Choose Folder…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir carpeta…"
+          }
+        }
+      }
+    },
+    "Could not scan the folder: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo analizar la carpeta: %@"
+          }
+        }
+      }
+    },
+    "Default Zoom" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom predeterminado"
+          }
+        }
+      }
+    },
+    "Default Zoom (⌘0) — Fit to Page" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom predeterminado (⌘0) — Ajustar a la página"
+          }
+        }
+      }
+    },
+    "Drop exactly one local folder onto the window." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suelta exactamente una carpeta local en la ventana."
+          }
+        }
+      }
+    },
+    "Enter an absolute folder path, such as /Users/name/Documents, or a path starting with ~." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduce una ruta absoluta de carpeta, como /Users/nombre/Documents, o una ruta que empiece por ~."
+          }
+        }
+      }
+    },
+    "Folder path" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ruta de la carpeta"
+          }
+        }
+      }
+    },
+    "Folder status" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estado de la carpeta"
+          }
+        }
+      }
+    },
+    "Folder:" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpeta:"
+          }
+        }
+      }
+    },
+    "Go" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir"
+          }
+        }
+      }
+    },
+    "Grant read access to the folder you requested." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concede acceso de lectura a la carpeta solicitada."
+          }
+        }
+      }
+    },
+    "Next pair" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par siguiente"
+          }
+        }
+      }
+    },
+    "Next Pair" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par siguiente"
+          }
+        }
+      }
+    },
+    "Next pair (Down Arrow)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par siguiente (flecha abajo)"
+          }
+        }
+      }
+    },
+    "No eligible PDFs" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay PDF válidos"
+          }
+        }
+      }
+    },
+    "No pairs" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin pares"
+          }
+        }
+      }
+    },
+    "No PDF" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin PDF"
+          }
+        }
+      }
+    },
+    "No second PDF" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin segundo PDF"
+          }
+        }
+      }
+    },
+    "Only readable, unlocked, single-page PDFs in this folder are shown." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo se muestran los PDF legibles, desbloqueados y de una sola página de esta carpeta."
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        }
+      }
+    },
+    "Open Folder" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir carpeta"
+          }
+        }
+      }
+    },
+    "Open Folder by Path" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir carpeta por ruta"
+          }
+        }
+      }
+    },
+    "Open Folder by Path…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir carpeta por ruta…"
+          }
+        }
+      }
+    },
+    "Pair %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pair %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "PDF Pair Viewer" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF Pair Viewer"
+          }
+        }
+      }
+    },
+    "Previous pair" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par anterior"
+          }
+        }
+      }
+    },
+    "Previous Pair" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par anterior"
+          }
+        }
+      }
+    },
+    "Previous pair (Up Arrow)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par anterior (flecha arriba)"
+          }
+        }
+      }
+    },
+    "Scanning folder…" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Analizando carpeta…"
+          }
+        }
+      }
+    },
+    "Skipped PDFs: %@." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "PDF omitidos: %@."
+          }
+        }
+      }
+    },
+    "The folder cannot be read. Use Browse to grant access or choose another folder." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede leer la carpeta. Usa Examinar para conceder acceso o elige otra carpeta."
+          }
+        }
+      }
+    },
+    "The folder is open, but its access could not be saved for next launch: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La carpeta está abierta, pero no se pudo guardar su acceso para el próximo inicio: %@"
+          }
+        }
+      }
+    },
+    "The saved folder could not be restored. Use Browse to select it again." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se pudo restaurar la carpeta guardada. Usa Examinar para seleccionarla de nuevo."
+          }
+        }
+      }
+    },
+    "The selected folder does not match the submitted path. Use Browse to choose a different folder." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La carpeta seleccionada no coincide con la ruta indicada. Usa Examinar para elegir otra carpeta."
+          }
+        }
+      }
+    },
+    "This PDF is no longer readable as an unlocked, single-page document. Choose the folder again to rescan." : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este PDF ya no se puede leer como un documento desbloqueado de una sola página. Vuelve a elegir la carpeta para volver a analizarla."
+          }
+        }
+      }
+    },
+    "Zoom In" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acercar"
+          }
+        }
+      }
+    },
+    "Zoom In (⌘+)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acercar (⌘+)"
+          }
+        }
+      }
+    },
+    "Zoom Out" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alejar"
+          }
+        }
+      }
+    },
+    "Zoom Out (⌘−)" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alejar (⌘−)"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

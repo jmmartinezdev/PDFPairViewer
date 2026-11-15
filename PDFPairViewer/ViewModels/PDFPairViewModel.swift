@@ -136,7 +136,7 @@ final class PDFPairViewModel: ObservableObject {
                 self.focusRequest = UUID()
             } catch {
                 guard let self, !Task.isCancelled, self.requestID == id, !self.closed else { return }
-                self.selectionError = "Could not scan the folder: \(error.localizedDescription)"
+                self.selectionError = String(localized: "Could not scan the folder: \(error.localizedDescription)")
                 self.loadState = self.folder == nil ? .initial : (self.catalog.entries.isEmpty ? .empty : .ready)
             }
         }

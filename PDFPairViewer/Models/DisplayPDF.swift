@@ -17,7 +17,7 @@ final class DisplayPDF {
             error = nil
         } else {
             document = nil
-            error = "This PDF is no longer readable as an unlocked, single-page document. Choose the folder again to rescan."
+            error = String(localized: "This PDF is no longer readable as an unlocked, single-page document. Choose the folder again to rescan.")
         }
     }
 

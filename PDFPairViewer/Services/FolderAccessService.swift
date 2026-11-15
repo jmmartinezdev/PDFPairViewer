@@ -36,10 +36,10 @@ final class FolderAccessService {
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
         panel.canCreateDirectories = false
-        panel.prompt = "Open Folder"
+        panel.prompt = String(localized: "Open Folder")
         panel.message = requested == nil
-            ? "Choose a folder containing single-page PDFs."
-            : "Grant read access to the folder you requested."
+            ? String(localized: "Choose a folder containing single-page PDFs.")
+            : String(localized: "Grant read access to the folder you requested.")
         panel.directoryURL = seed
         let response = await withCheckedContinuation { continuation in
             if let window = NSApp.keyWindow {
@@ -65,7 +65,7 @@ final class FolderAccessService {
             defaults.set(data, forKey: bookmarkKey)
             return nil
         } catch {
-            return "The folder is open, but its access could not be saved for next launch: \(error.localizedDescription)"
+            return String(localized: "The folder is open, but its access could not be saved for next launch: \(error.localizedDescription)")
         }
     }
 
