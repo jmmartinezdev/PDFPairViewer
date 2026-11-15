@@ -11,6 +11,40 @@ final class PDFViewportSynchronization {
     private var updateScheduled = false
     private var applying = false
 
+    func zoomIn() {
+        changeZoom { $0.zoomIn(nil) }
+    }
+
+    func zoomOut() {
+        changeZoom { $0.zoomOut(nil) }
+    }
+
+    func resetZoom() {
+        pendingSource = nil
+        applying = true
+        defer { applying = false }
+        for view in [left, right].compactMap({ $0 }) where view.document != nil {
+            view.layoutSubtreeIfNeeded()
+            view.scaleFactor = view.scaleFactorForSizeToFit
+            view.layoutSubtreeIfNeeded()
+        }
+    }
+
+    private func changeZoom(_ action: (FittingPDFView) -> Void) {
+        let views = [left, right].compactMap { $0 }.filter { $0.document != nil }
+        guard let source = pendingSource.flatMap({ pending in views.first { $0 === pending } })
+                ?? views.first else { return }
+        pendingSource = nil
+        applying = true
+        defer { applying = false }
+        source.layoutSubtreeIfNeeded()
+        action(source)
+        source.layoutSubtreeIfNeeded()
+        for target in views where target !== source {
+            match(source, to: target)
+        }
+    }
+
     func attach(_ view: FittingPDFView) {
         guard observers[ObjectIdentifier(view)] == nil else { return }
         if left == nil { left = view } else { right = view }

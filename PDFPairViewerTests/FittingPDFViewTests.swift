@@ -5,6 +5,67 @@ import XCTest
 
 final class FittingPDFViewTests: XCTestCase {
     @MainActor
+    func testZoomCommandsUpdateBothPanesAndResetToFit() async throws {
+        let folder = try Fixtures.folder()
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let url = folder.appendingPathComponent("page.pdf")
+        try Fixtures.pdf(url)
+
+        func makeView(width: CGFloat, height: CGFloat) throws -> FittingPDFView {
+            let view = FittingPDFView(frame: CGRect(x: 0, y: 0, width: width, height: height))
+            view.displayMode = .singlePage
+            view.displaysPageBreaks = false
+            view.autoScales = true
+            view.document = try XCTUnwrap(PDFDocument(url: url))
+            view.layoutSubtreeIfNeeded()
+            view.layout()
+            return view
+        }
+        let left = try makeView(width: 600, height: 800)
+        let right = try makeView(width: 450, height: 600)
+        let synchronization = PDFViewportSynchronization()
+        synchronization.attach(left)
+        synchronization.attach(right)
+        defer {
+            synchronization.detach(left)
+            synchronization.detach(right)
+        }
+        func relativeZoom(_ view: FittingPDFView) -> CGFloat {
+            view.scaleFactor / view.scaleFactorForSizeToFit
+        }
+
+        synchronization.zoomOut()
+        XCTAssertEqual(relativeZoom(left), 1, accuracy: 0.01)
+        synchronization.zoomIn()
+        let zoomed = relativeZoom(left)
+        XCTAssertGreaterThan(zoomed, 1)
+        XCTAssertEqual(relativeZoom(right), zoomed, accuracy: 0.01)
+        synchronization.zoomOut()
+        XCTAssertLessThan(relativeZoom(left), zoomed)
+        XCTAssertEqual(relativeZoom(right), relativeZoom(left), accuracy: 0.01)
+
+        // A queued gesture update must not override an explicit reset.
+        right.scaleFactor = right.scaleFactorForSizeToFit * 3
+        synchronization.resetZoom()
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async { continuation.resume() }
+        }
+        XCTAssertEqual(relativeZoom(left), 1, accuracy: 0.01)
+        XCTAssertEqual(relativeZoom(right), 1, accuracy: 0.01)
+
+        // A missing/failed left document must not prevent zooming the right pane.
+        left.document = nil
+        synchronization.zoomIn()
+        XCTAssertGreaterThan(relativeZoom(right), 1)
+        synchronization.resetZoom()
+        XCTAssertEqual(relativeZoom(right), 1, accuracy: 0.01)
+        right.document = nil
+        synchronization.zoomIn()
+        synchronization.zoomOut()
+        synchronization.resetZoom()
+    }
+
+    @MainActor
     func testZoomCannotGoBelowFitAndMinimumUpdatesOnResize() throws {
         let folder = try Fixtures.folder()
         defer { try? FileManager.default.removeItem(at: folder) }

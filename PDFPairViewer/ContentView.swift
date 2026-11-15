@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @StateObject private var model = PDFPairViewModel()
+    @State private var synchronization = PDFViewportSynchronization()
     @FocusState private var pathIsFocused: Bool
     @State private var dropTargeted = false
     @State private var showingPath = false
@@ -15,6 +16,45 @@ struct ContentView: View {
         model.catalog.skipped.summary != nil || model.persistenceWarning != nil
     }
 
+    private var canZoom: Bool {
+        !showingPath && !showingStatus && !model.accessService.isSelecting &&
+            (model.left?.document != nil || model.right?.document != nil)
+    }
+
+    private var zoomActions: PDFZoomActions? {
+        guard canZoom else { return nil }
+        return PDFZoomActions(zoomOut: synchronization.zoomOut,
+                              resetZoom: synchronization.resetZoom,
+                              zoomIn: synchronization.zoomIn)
+    }
+
+    private var navigationActions: PairNavigationActions? {
+        guard !showingPath, !showingStatus, !model.accessService.isSelecting else { return nil }
+        let previous: (() -> Void)? = model.canGoPrevious ? { model.previous() } : nil
+        let next: (() -> Void)? = model.canGoNext ? { model.next() } : nil
+        return PairNavigationActions(previous: previous, next: next)
+    }
+
+    private var zoomToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button(action: synchronization.zoomOut) {
+                Label("Zoom Out", systemImage: "minus.magnifyingglass")
+            }
+            .help("Zoom Out (⌘−)")
+            .disabled(!canZoom)
+            Button(action: synchronization.resetZoom) {
+                Label("Default Zoom", systemImage: "1.magnifyingglass")
+            }
+            .help("Default Zoom (⌘0) — Fit to Page")
+            .disabled(!canZoom)
+            Button(action: synchronization.zoomIn) {
+                Label("Zoom In", systemImage: "plus.magnifyingglass")
+            }
+            .help("Zoom In (⌘+)")
+            .disabled(!canZoom)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             Divider()
@@ -25,7 +65,8 @@ struct ContentView: View {
                     .background(.red.opacity(0.08))
             }
             ZStack {
-                PDFPairView(model: model, suspendsKeyboard: showingPath || showingStatus)
+                PDFPairView(model: model, synchronization: synchronization,
+                            suspendsKeyboard: showingPath || showingStatus)
                 if model.folder == nil || model.loadState == .empty {
                     VStack(spacing: 14) {
                         Image(systemName: "doc.on.doc")
@@ -97,6 +138,8 @@ struct ContentView: View {
                     }
                 }
             }
+            zoomToolbar
+            ToolbarSpacer(.fixed, placement: .primaryAction)
             ToolbarItemGroup(placement: .primaryAction) {
                 Button(action: model.previous) {
                     Label("Previous pair", systemImage: "chevron.up")
@@ -173,6 +216,8 @@ struct ContentView: View {
         .onAppear { model.restoreIfNeeded() }
         .onChange(of: model.focusRequest) { _, _ in pathIsFocused = false }
         .focusedSceneValue(\.openFolderByPath, { showingPath = true })
+        .focusedSceneValue(\.pdfZoom, zoomActions)
+        .focusedSceneValue(\.pairNavigation, navigationActions)
     }
 }
 

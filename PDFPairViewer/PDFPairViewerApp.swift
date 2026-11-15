@@ -9,6 +9,10 @@ struct PDFPairViewerApp: App {
         }
         .windowToolbarStyle(.unified)
         .defaultSize(width: 1200, height: 820)
-        .commands { FolderCommands() }
+        .commands {
+            FolderCommands()
+            PDFZoomCommands()
+            PairNavigationCommands()
+        }
     }
 }

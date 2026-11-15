@@ -3,7 +3,7 @@ import SwiftUI
 struct PDFPairView: View {
     @ObservedObject var model: PDFPairViewModel
     @Environment(\.colorSchemeContrast) private var contrast
-    @State private var synchronization = PDFViewportSynchronization()
+    let synchronization: PDFViewportSynchronization
     var suspendsKeyboard = false
 
     var body: some View {
