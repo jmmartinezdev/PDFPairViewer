@@ -16,6 +16,8 @@ open build/Build/Products/Debug/PDFPairViewer.app
 
 ## Use
 
+- **About PDF Pair Viewer** includes Support and Privacy Policy links beneath the version. The **Help** menu provides the same destinations. Links open in your default browser; the app itself remains offline.
+
 - Click the toolbar folder button (⌘O), use **Choose Folder…** in the empty state, or drop exactly one folder anywhere on the window.
 - Use **File → Open Folder by Path…** (⇧⌘O), or right-click the folder button, to enter an absolute path (including `~/…`). Press Return or **Open** to load it; **Browse…** opens the native picker instead.
 - If a typed/dropped folder needs authorization, the system picker opens there. Select that same folder to grant access. Canceling keeps the existing folder unchanged.
@@ -53,6 +55,8 @@ Three main SwiftUI views (`ContentView`, `FolderPickerView`, `PDFPairView`), a s
 The XCTest target generates local PDF fixtures. It covers natural ordering and literal ties, mixed/empty folders, uppercase extensions, invalid/locked/multipage PDFs, ignored nested files and links, enumeration failure, pair bounds, odd/single/empty catalogs, missing display files, folder replacement, bookmark round-trip and invalid bookmark recovery, late scans, and window-close cancellation.
 
 System UI and actual permission grants need these **manual checks on a signed, sandboxed build**; automated tests are not a substitute:
+
+- Open **About PDF Pair Viewer** and check the centered Support and Privacy Policy links in Light and Dark appearances. Verify both open the correct pages in the default browser. Check Help-menu links, including with all viewer windows closed, keyboard navigation, and VoiceOver.
 
 - Browse, typed path outside the sandbox, and Finder folder drop all load the intended folder. Mismatched authorization and a dropped file show feedback; picker cancellation preserves the old pair.
 - Click each PDF pane, then use Up/Down. Try holding Down, modified arrows, editing a path, and arrow navigation within the picker.
